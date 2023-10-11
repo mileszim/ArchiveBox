@@ -16,13 +16,13 @@
 # Archivebox](https://github.com/ArchiveBox/ArchiveBox#archivebox-development).
 
 
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 LABEL name="archivebox" \
-    maintainer="Nick Sweeting <archivebox-docker@sweeting.me>" \
+    maintainer="Miles Zimmerman <miles@zim.dev>" \
     description="All-in-one personal internet archiving container" \
-    homepage="https://github.com/ArchiveBox/ArchiveBox" \
-    documentation="https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker"
+    homepage="https://github.com/mileszim/ArchiveBox" \
+    documentation="https://github.com/mileszim/ArchiveBox/wiki/Docker#docker"
 
 # System-level base config
 ENV TZ=UTC \
@@ -48,24 +48,24 @@ RUN groupadd --system $ARCHIVEBOX_USER \
 # Install system dependencies
 RUN apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        apt-transport-https ca-certificates gnupg2 zlib1g-dev \
-        dumb-init gosu cron unzip curl \
+    apt-transport-https ca-certificates gnupg2 zlib1g-dev \
+    dumb-init gosu cron unzip curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install apt dependencies
 RUN apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        wget curl chromium git ffmpeg youtube-dl ripgrep \
-        fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto fonts-freefont-ttf \
+    wget curl chromium git ffmpeg youtube-dl ripgrep \
+    fontconfig fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-symbola fonts-noto fonts-freefont-ttf \
     && ln -s /usr/bin/chromium /usr/bin/chromium-browser \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node environment
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
-    && echo 'deb https://deb.nodesource.com/node_18.x buster main' >> /etc/apt/sources.list \
+    && echo 'deb https://deb.nodesource.com/node_18.x bookworm main' >> /etc/apt/sources.list \
     && apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        nodejs \
+    nodejs \
     # && npm install -g npm \
     && rm -rf /var/lib/apt/lists/*
 
@@ -87,12 +87,12 @@ ADD "./setup.py" "$CODE_DIR/"
 ADD "./package.json" "$CODE_DIR/archivebox/"
 RUN apt-get update -qq \
     && apt-get install -qq -y --no-install-recommends \
-        build-essential python-dev python3-dev libldap2-dev libsasl2-dev \
+    build-essential python3-dev libldap2-dev libsasl2-dev \
     && echo 'empty placeholder for setup.py to use' > "$CODE_DIR/archivebox/README.md" \
     && python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.install_requires + result.extras_require["sonic"]))' > /tmp/requirements.txt \
     && pip install -r /tmp/requirements.txt \
     && pip install --upgrade youtube-dl yt-dlp \
-    && apt-get purge -y build-essential python-dev python3-dev libldap2-dev libsasl2-dev \
+    && apt-get purge -y build-essential python3-dev libldap2-dev libsasl2-dev \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -103,7 +103,7 @@ RUN apt-get update -qq \
 #         dh-python debhelper devscripts dput software-properties-common \
 #         python3-distutils python3-setuptools python3-wheel python3-stdeb
 # RUN python3 -c 'from distutils.core import run_setup; result = run_setup("./setup.py", stop_after="init"); print("\n".join(result.extras_require["dev"]))' > /tmp/dev_requirements.txt \
-    # && pip install --quiet -r /tmp/dev_requirements.txt
+# && pip install --quiet -r /tmp/dev_requirements.txt
 
 # Install ArchiveBox Python package and its dependencies
 WORKDIR "$CODE_DIR"
