@@ -19,10 +19,10 @@
 FROM python:3.11-slim-bookworm
 
 LABEL name="archivebox" \
-    maintainer="Nick Sweeting <archivebox-docker@sweeting.me>" \
+    maintainer="Miles Zimmerman <miles@zim.dev>" \
     description="All-in-one personal internet archiving container" \
-    homepage="https://github.com/ArchiveBox/ArchiveBox" \
-    documentation="https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker"
+    homepage="https://github.com/mileszim/ArchiveBox" \
+    documentation="https://github.com/mileszim/ArchiveBox/wiki/Docker#docker"
 
 # System-level base config
 ENV TZ=UTC \
